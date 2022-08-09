@@ -10,10 +10,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import javax.ws.rs.core.Response.Status;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.bybit.dto.BybitResult;
+import org.knowm.xchange.bybit.dto.trade.BybitLinearOrderDetails;
 import org.knowm.xchange.bybit.dto.trade.BybitOrderDetails;
 import org.knowm.xchange.bybit.dto.trade.BybitOrderRequest;
 
@@ -169,5 +173,49 @@ public class BybitTradeServiceRawTest extends BaseWiremockTest {
 
     System.out.println(order);
   }
+
+
+    @Test
+    public void testPlaceLinearOrder() throws Exception {
+        Exchange bybitExchange = createExchange();
+        BybitTradeServiceRaw bybitAccountServiceRaw = new BybitTradeServiceRaw(bybitExchange);
+
+
+
+        String response = IOUtils.resourceToString("/placeLinearOrderResponse.json", StandardCharsets.UTF_8);
+
+        stubFor(
+            post(urlPathEqualTo("/private/linear/order/create"))
+                .willReturn(
+                    aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(response)
+                )
+        );
+
+        BybitResult<BybitLinearOrderDetails> order = bybitAccountServiceRaw.placeLinealOrder("COINUSDT", BigDecimal.valueOf(300),"SELL", BigDecimal.ONE, BigDecimal.TEN);
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode responseObject = mapper.readTree(response);
+
+        BybitLinearOrderDetails orderRequestResult = order.getResult();
+        JsonNode responseObjectResult = responseObject.get("result");
+
+        assertThat(responseObjectResult.get("order_id").textValue()).isEqualTo(orderRequestResult.getOrderId());
+
+//        assertThat(responseObjectResult.get("accountId").textValue()).isEqualTo(orderRequestResult.getAccountId());
+//        assertThat(responseObjectResult.get("symbol").textValue()).isEqualTo(orderRequestResult.getSymbol());
+//        assertThat(responseObjectResult.get("symbolName").textValue()).isEqualTo(orderRequestResult.getSymbolName());
+//        assertThat(responseObjectResult.get("orderLinkId").textValue()).isEqualTo(orderRequestResult.getOrderLinkId());
+//        assertThat(responseObjectResult.get("orderId").textValue()).isEqualTo(orderRequestResult.getOrderId());
+//        assertThat(responseObjectResult.get("price").textValue()).isEqualTo(orderRequestResult.getPrice());
+//        assertThat(responseObjectResult.get("origQty").textValue()).isEqualTo(orderRequestResult.getOrigQty());
+//        assertThat(responseObjectResult.get("executedQty").textValue()).isEqualTo(orderRequestResult.getExecutedQty());
+//        assertThat(responseObjectResult.get("status").textValue()).isEqualTo(orderRequestResult.getStatus());
+//        assertThat(responseObjectResult.get("timeInForce").textValue()).isEqualTo(orderRequestResult.getTimeInForce());
+//        assertThat(responseObjectResult.get("type").textValue()).isEqualTo(orderRequestResult.getType());
+//        assertThat(responseObjectResult.get("side").textValue()).isEqualTo(orderRequestResult.getSide());
+    }
 
 }
