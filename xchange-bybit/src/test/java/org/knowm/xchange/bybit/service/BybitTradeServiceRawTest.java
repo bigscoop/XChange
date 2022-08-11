@@ -194,7 +194,7 @@ public class BybitTradeServiceRawTest extends BaseWiremockTest {
                 )
         );
 
-        BybitResult<BybitLinearOrderDetails> order = bybitAccountServiceRaw.placeLinealOrder("COINUSDT", BigDecimal.valueOf(300),"SELL", BigDecimal.ONE, BigDecimal.TEN);
+        BybitResult<BybitLinearOrderDetails> order = bybitAccountServiceRaw.placeLinealOrder("COINUSDT", BigDecimal.valueOf(300),null, "Market", "SELL", BigDecimal.ONE, BigDecimal.TEN);
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode responseObject = mapper.readTree(response);

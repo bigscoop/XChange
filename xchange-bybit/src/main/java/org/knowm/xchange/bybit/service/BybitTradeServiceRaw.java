@@ -43,13 +43,11 @@ public class BybitTradeServiceRaw extends BybitBaseService {
     return placeOrder;
   }
 
-  public BybitResult<BybitLinearOrderDetails> placeLinealOrder(String symbol, BigDecimal qty, String side,
-      BigDecimal stopLoss, BigDecimal takeProfit) throws IOException {
-    BybitResult<BybitLinearOrderDetails> placeOrder = bybitAuthenticated.placeLinearOrder(apiKey, false, "Market",
-        0,
-        qty,
-        false,
-        side, stopLoss, symbol, takeProfit, "ImmediateOrCancel", nonceFactory, signatureCreator
+  public BybitResult<BybitLinearOrderDetails> placeLinealOrder(String symbol, BigDecimal qty, BigDecimal price,
+      String type, String side, BigDecimal stopLoss, BigDecimal takeProfit) throws IOException {
+    BybitResult<BybitLinearOrderDetails> placeOrder = bybitAuthenticated.placeLinearOrder(apiKey,
+        false, type, 0, qty, price, false, side, stopLoss, symbol, takeProfit,
+        "ImmediateOrCancel", nonceFactory, signatureCreator
     );
     if (!placeOrder.isSuccess()) {
       throw createBybitExceptionFromResult(placeOrder);

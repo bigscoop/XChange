@@ -61,6 +61,7 @@ public interface BybitAuthenticated {
       @FormParam("order_type") String type,
       @FormParam("position_idx") Integer positionIdx,
       @FormParam("qty") BigDecimal qty,
+      @FormParam("price") BigDecimal price,
       @FormParam("reduce_only") boolean reduceOnly,
       @FormParam("side") String side,
       @FormParam("stop_loss") BigDecimal stopLoss,

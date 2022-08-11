@@ -40,14 +40,16 @@ public class BybitTradeService extends BybitTradeServiceRaw implements TradeServ
         return order.getResult().getOrderId();
     }
 
-    public BybitLinearOrderDetails placeLinearOrder(Instrument instrument, BigDecimal qty, String side, BigDecimal stopLoss, BigDecimal takeProfit) throws IOException {
+    public BybitLinearOrderDetails placeLinearOrder(Instrument instrument, BigDecimal qty, BigDecimal limitPrice, String side, BigDecimal stopLoss, BigDecimal takeProfit) throws IOException {
         CurrencyPairMetaData currencyPairMetaData = exchange.getExchangeMetaData().getCurrencyPairs().get(instrument);
         OrderType orderType = "sell".equalsIgnoreCase(side) ? OrderType.ASK : OrderType.BID;
         BigDecimal adjustedQty = OrderValuesHelper.adjustAmount(qty, currencyPairMetaData);
         BigDecimal adjustedStopLoss = OrderValuesHelper.adjustPrice(stopLoss, orderType, currencyPairMetaData);
         BigDecimal adjustedTakeProfit = OrderValuesHelper.adjustPrice(takeProfit, orderType.getOpposite(), currencyPairMetaData);
+        BigDecimal adjustedLimitPrice = OrderValuesHelper.adjustPrice(limitPrice, orderType, currencyPairMetaData);
+        String type = adjustedLimitPrice == null ? "Market" : "Limit";
         BybitResult<BybitLinearOrderDetails> order = placeLinealOrder(
-            convertToBybitSymbol(instrument.toString()), adjustedQty,
+            convertToBybitSymbol(instrument.toString()), adjustedQty, adjustedLimitPrice, type,
             side, adjustedStopLoss, adjustedTakeProfit);
 
         return order.getResult();
