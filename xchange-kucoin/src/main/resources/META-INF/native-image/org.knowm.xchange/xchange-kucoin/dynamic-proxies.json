@@ -1,0 +1,14 @@
+[
+  ["org.knowm.xchange.kucoin.service.AccountAPI"],
+  ["org.knowm.xchange.kucoin.service.DepositAPI"],
+  ["org.knowm.xchange.kucoin.service.FillAPI"],
+  ["org.knowm.xchange.kucoin.service.HistOrdersAPI"],
+  ["org.knowm.xchange.kucoin.service.HistoryAPI"],
+  ["org.knowm.xchange.kucoin.service.LimitOrderAPI"],
+  ["org.knowm.xchange.kucoin.service.OrderAPI"],
+  ["org.knowm.xchange.kucoin.service.OrderBookAPI"],
+  ["org.knowm.xchange.kucoin.service.SymbolAPI"],
+  ["org.knowm.xchange.kucoin.service.TradingFeeAPI"],
+  ["org.knowm.xchange.kucoin.service.WebsocketAPI"],
+  ["org.knowm.xchange.kucoin.service.WithdrawalAPI"]
+]
