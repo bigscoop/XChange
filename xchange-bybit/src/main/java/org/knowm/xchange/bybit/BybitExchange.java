@@ -44,4 +44,5 @@ public class BybitExchange extends BaseExchange {
         }
     );
   }
+
 }
