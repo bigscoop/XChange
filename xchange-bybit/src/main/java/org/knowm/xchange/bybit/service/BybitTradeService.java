@@ -17,7 +17,7 @@ import org.knowm.xchange.bybit.dto.trade.BybitOrderRequest;
 import org.knowm.xchange.bybit.dto.trade.BybitPosition;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.Order.OrderType;
-import org.knowm.xchange.dto.meta.CurrencyPairMetaData;
+import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.trade.TradeService;
@@ -41,12 +41,13 @@ public class BybitTradeService extends BybitTradeServiceRaw implements TradeServ
     }
 
     public BybitLinearOrderDetails placeLinearOrder(Instrument instrument, BigDecimal qty, BigDecimal limitPrice, String side, BigDecimal stopLoss, BigDecimal takeProfit) throws IOException {
-        CurrencyPairMetaData currencyPairMetaData = exchange.getExchangeMetaData().getCurrencyPairs().get(instrument);
+        InstrumentMetaData instrumentMetaData = exchange.getExchangeMetaData().getInstruments().get(instrument);
+        OrderValuesHelper helper = new OrderValuesHelper(instrumentMetaData);
         OrderType orderType = "sell".equalsIgnoreCase(side) ? OrderType.ASK : OrderType.BID;
-        BigDecimal adjustedQty = OrderValuesHelper.adjustAmount(qty, currencyPairMetaData);
-        BigDecimal adjustedStopLoss = OrderValuesHelper.adjustPrice(stopLoss, orderType, currencyPairMetaData);
-        BigDecimal adjustedTakeProfit = OrderValuesHelper.adjustPrice(takeProfit, orderType.getOpposite(), currencyPairMetaData);
-        BigDecimal adjustedLimitPrice = OrderValuesHelper.adjustPrice(limitPrice, orderType, currencyPairMetaData);
+        BigDecimal adjustedQty = helper.adjustAmount(qty);
+        BigDecimal adjustedStopLoss = helper.adjustPrice(stopLoss, orderType);
+        BigDecimal adjustedTakeProfit = helper.adjustPrice(takeProfit, orderType.getOpposite());
+        BigDecimal adjustedLimitPrice = helper.adjustPrice(limitPrice, orderType);
         String type = adjustedLimitPrice == null ? "Market" : "Limit";
         BybitResult<BybitLinearOrderDetails> order = placeLinealOrder(
             convertToBybitSymbol(instrument.toString()), adjustedQty, adjustedLimitPrice, type,
